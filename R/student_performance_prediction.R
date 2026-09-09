@@ -1,25 +1,30 @@
-# import data
-data <- read.csv("C:/Users/USER/OneDrive/Desktop/AL-Student-Performance-Prediction/data/2020_al_data_kaggle_upload_new_old_syllabi.csv")
+#--------------------------------------------------
+# A/L STUDENT PERFORMANCE PREDICTION
+#--------------------------------------------------
 
-# check dataset
+#--------------------------------------------------
+# IMPORT DATA
+#--------------------------------------------------
+
+data <- read.csv(
+  "data/2020_al_data_kaggle_upload_new_old_syllabi.csv"
+)
+
+#--------------------------------------------------
+# DATASET EXPLORATION
+#--------------------------------------------------
+
+# dataset structure
 str(data)
-head(data)
--------------------------
-#Data Cleaning & Checking
--------------------------
-  
-#checking dataset size
 
+# first few rows
+head(data)
+
+# dataset size
 dim(data)
 
-#checking column names
-
+# column names
 names(data)
 
-#checking missing values
-
-colSums(is.na(data))
-
-#dataset summary
-
+# dataset summary
 summary(data)
