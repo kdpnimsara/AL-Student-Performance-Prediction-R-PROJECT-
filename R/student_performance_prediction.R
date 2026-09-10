@@ -82,3 +82,60 @@ data$Performance <- as.factor(data$Performance)
 head(data$Performance)
 
 table(data$Performance)
+
+#--------------------------------------------------
+# SELECT FEATURES
+#--------------------------------------------------
+
+#remove unnecessary columns
+
+data2 <- data[, !names(data) %in% c(
+  "Zscore",
+  "district_rank",
+  "island_rank"
+)]
+
+#check dataset
+
+str(data2)
+
+
+# TRAIN AND TEST DATA
+#--------------------------------------------------
+
+#install and load package
+
+install.packages("caret")
+
+library(caret)
+
+
+#set seed
+
+set.seed(123)
+
+
+#split data
+
+trainIndex <- createDataPartition(
+  data2$Performance,
+  p = 0.80,
+  list = FALSE
+)
+
+
+#create training data
+
+trainData <- data2[trainIndex, ]
+
+
+#create testing data
+
+testData <- data2[-trainIndex, ]
+
+
+#check data size
+
+dim(trainData)
+
+dim(testData)
