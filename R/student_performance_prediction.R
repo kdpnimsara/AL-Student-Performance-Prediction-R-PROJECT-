@@ -1,69 +1,76 @@
-#--------------------------------------------------
+#==================================================
 # A/L STUDENT PERFORMANCE PREDICTION
+#==================================================
+
+
 #--------------------------------------------------
-  data <- read.csv("C:/Users/USER/OneDrive/Documents/AL-Student-Performance-Prediction-R-PROJECT-/data/2020_al_data_kaggle_upload_new_old_syllabi.csv")
-
-
-  
-# DATASET EXPLORATION
+# 1. IMPORT DATA
 #--------------------------------------------------
 
-# dataset structure
+data <- read.csv(
+  "C://Users//USER//OneDrive//Documents//AL-Student-Performance-Prediction-R-PROJECT-//data//2020_al_data_kaggle_upload_new_old_syllabi.csv"
+)
+
+
+#--------------------------------------------------
+# 2. LOAD LIBRARIES
+#--------------------------------------------------
+
+library(caret)
+library(e1071)
+library(randomForest)
+library(ggplot2)
+
+
+#--------------------------------------------------
+# 3. CHECK DATASET
+#--------------------------------------------------
+
 str(data)
 
-# first few rows
 head(data)
 
-# dataset size
 dim(data)
 
-# column names
 names(data)
 
-# dataset summary
-summary(data)
 
-
-# CHECKING DATASET
+#--------------------------------------------------
+# 4. DATA PREPROCESSING
 #--------------------------------------------------
 
-# dataset size
-dim(data)
+# Convert Zscore to numeric
 
-# column names
-names(data)
-
-# missing values
-colSums(is.na(data))
-
-# dataset summary
-summary(data)
+data$Zscore <- as.numeric(
+  trimws(data$Zscore)
+)
 
 
-#data preprocessing
-#----------------------------------------------------
+# Convert categorical variables to factors
 
-#convert Zscore to numeric
-data$Zscore <- as.numeric(data$Zscore)
-
-#check Zscore
-head(data$Zscore)
-
-#convert gender to factor
-data$gender <- as.factor(data$gender)
-
-#convert stream to factor
 data$stream <- as.factor(data$stream)
 
-#convert syllabus to factor
 data$syllabus <- as.factor(data$syllabus)
 
-#check dataset
-str(data)
+data$gender <- as.factor(data$gender)
 
 
-#target variable
-#---------------------------------
+# Remove rows with missing values
+
+data <- na.omit(data)
+
+
+# Check missing values
+
+colSums(is.na(data))
+
+
+#--------------------------------------------------
+# 5. CREATE TARGET VARIABLE
+#--------------------------------------------------
+
+# High = Zscore >= 0
+# Low  = Zscore < 0
 
 data$Performance <- ifelse(
   data$Zscore >= 0,
@@ -71,71 +78,213 @@ data$Performance <- ifelse(
   "Low"
 )
 
-#convert target variable to factor
-#-------------------------------------
 
-data$Performance <- as.factor(data$Performance)
+# Convert Performance to factor
 
-#check target variable
-#----------------------------------
+data$Performance <- as.factor(
+  data$Performance
+)
 
-head(data$Performance)
+
+# Check target
 
 table(data$Performance)
 
+
 #--------------------------------------------------
-# SELECT FEATURES
-#--------------------------------------------------
-
-#remove unnecessary columns
-
-data2 <- data[, !names(data) %in% c(
-  "Zscore",
-  "district_rank",
-  "island_rank"
-)]
-
-#check dataset
-
-str(data2)
-
-
-# TRAIN AND TEST DATA
+# 6. SELECT FEATURES
 #--------------------------------------------------
 
-#install and load package
+# Remove ID and outcome-related variables
 
-install.packages("caret")
+features <- data[
+  ,
+  !names(data) %in% c(
+    "index",
+    "Zscore",
+    "district_rank",
+    "island_rank",
+    "Performance"
+  )
+]
 
-library(caret)
+
+# Target variable
+
+target <- data$Performance
 
 
-#set seed
+# Check selected features
 
-set.seed(123)
+names(features)
 
 
-#split data
+#--------------------------------------------------
+# 7. TRAIN / TEST SPLIT
+#--------------------------------------------------
 
-trainIndex <- createDataPartition(
-  data2$Performance,
+set.seed(125)
+
+train_index <- createDataPartition(
+  target,
   p = 0.80,
   list = FALSE
 )
 
 
-#create training data
+xtrain <- features[
+  train_index,
+]
 
-trainData <- data2[trainIndex, ]
+xtest <- features[
+  -train_index,
+]
+
+ytrain <- target[
+  train_index
+]
+
+ytest <- target[
+  -train_index
+]
 
 
-#create testing data
+# Check sizes
 
-testData <- data2[-trainIndex, ]
+dim(xtrain)
+
+dim(xtest)
 
 
-#check data size
+#--------------------------------------------------
+# 8. SAMPLE DATA FOR FASTER TRAINING
+#--------------------------------------------------
 
-dim(trainData)
+set.seed(125)
 
-dim(testData)
+train_sample_index <- sample(
+  1:nrow(xtrain),
+  min(
+    10000,
+    nrow(xtrain)
+  )
+)
+
+
+test_sample_index <- sample(
+  1:nrow(xtest),
+  min(
+    10000,
+    nrow(xtest)
+  )
+)
+
+
+xtrain_sample <- xtrain[
+  train_sample_index,
+]
+
+xtest_sample <- xtest[
+  test_sample_index,
+]
+
+
+ytrain_sample <- ytrain[
+  train_sample_index
+]
+
+ytest_sample <- ytest[
+  test_sample_index
+]
+
+
+# Check sample sizes
+
+dim(xtrain_sample)
+
+dim(xtest_sample)
+
+
+#--------------------------------------------------
+# 9. CONVERT CATEGORICAL VARIABLES
+#    TO NUMERIC VARIABLES
+#--------------------------------------------------
+
+# Combine training and testing data
+
+all_x <- rbind(
+  xtrain_sample,
+  xtest_sample
+)
+
+
+# Create dummy variables
+
+dummy_model <- dummyVars(
+  ~ .,
+  data = all_x
+)
+
+
+all_x_numeric <- predict(
+  dummy_model,
+  newdata = all_x
+)
+
+
+all_x_numeric <- as.data.frame(
+  all_x_numeric
+)
+
+
+# Separate training and testing data
+
+xtrain_numeric <- all_x_numeric[
+  1:nrow(xtrain_sample),
+  ,
+  drop = FALSE
+]
+
+
+xtest_numeric <- all_x_numeric[
+  (nrow(xtrain_sample) + 1):
+    nrow(all_x_numeric),
+  ,
+  drop = FALSE
+]
+
+
+#--------------------------------------------------
+# 10. REMOVE ZERO VARIANCE FEATURES
+#--------------------------------------------------
+
+zero_variance <- nearZeroVar(
+  xtrain_numeric
+)
+
+
+if (
+  length(zero_variance) > 0
+) {
+  
+  xtrain_numeric <- xtrain_numeric[
+    ,
+    -zero_variance,
+    drop = FALSE
+  ]
+  
+  xtest_numeric <- xtest_numeric[
+    ,
+    -zero_variance,
+    drop = FALSE
+  ]
+}
+
+
+# Check dimensions
+
+dim(xtrain_numeric)
+
+dim(xtest_numeric)
+
+
