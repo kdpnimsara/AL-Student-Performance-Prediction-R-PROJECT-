@@ -288,3 +288,57 @@ dim(xtrain_numeric)
 dim(xtest_numeric)
 
 
+#--------------------------------------------------
+# 11. RANDOM FOREST FEATURE IMPORTANCE
+#--------------------------------------------------
+
+set.seed(125)
+
+feature_rf <- randomForest(
+  x = xtrain_numeric,
+  y = ytrain_sample,
+  ntree = 50,
+  importance = TRUE
+)
+
+
+# Get feature importance
+
+importance_values <- importance(
+  feature_rf
+)
+
+
+feature_importance <- data.frame(
+  Feature = rownames(
+    importance_values
+  ),
+  Importance = importance_values[
+    ,
+    "MeanDecreaseGini"
+  ]
+)
+
+
+# Sort by importance
+
+feature_importance <- feature_importance[
+  order(
+    feature_importance$Importance,
+    decreasing = TRUE
+  ),
+]
+
+
+# Show top features
+
+print(
+  head(
+    feature_importance,
+    10
+  )
+)
+
+
+
+
