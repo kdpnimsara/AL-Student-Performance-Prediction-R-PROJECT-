@@ -340,5 +340,23 @@ print(
 )
 
 
+#--------------------------------------------------
+# 12. SELECT TOP 10 FEATURES
+#--------------------------------------------------
+
+top_n <- min(
+  10,
+  nrow(feature_importance)
+)
+
+
+selected_features <- feature_importance$Feature[
+  1:top_n
+]
+
+
+print(selected_features)
+
+
 
 
