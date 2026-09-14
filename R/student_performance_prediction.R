@@ -358,5 +358,24 @@ selected_features <- feature_importance$Feature[
 print(selected_features)
 
 
+#--------------------------------------------------
+
+13. CREATE FINAL DATA
+
+#--------------------------------------------------
+
+final_xtrain <- xtrain_numeric[
+  ,
+  selected_features,
+  drop = FALSE
+]
+
+final_xtest <- xtest_numeric[
+  ,
+  selected_features,
+  drop = FALSE
+]
+
+
 
 
