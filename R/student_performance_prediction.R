@@ -360,7 +360,7 @@ print(selected_features)
 
 #--------------------------------------------------
 
-#13. CREATE FINAL DATA
+# 13. CREATE FINAL DATA
 
 #--------------------------------------------------
 
@@ -376,6 +376,66 @@ final_xtest <- xtest_numeric[
   drop = FALSE
 ]
 
+#--------------------------------------------------
+# 14. CHECK AND FIX NON-FINITE VALUES
+#--------------------------------------------------
 
+final_xtrain[
+  !is.finite(
+    as.matrix(final_xtrain)
+  )
+] <- 0
+
+
+final_xtest[
+  !is.finite(
+    as.matrix(final_xtest)
+  )
+] <- 0
+
+
+# Check missing values
+
+sum(
+  is.na(final_xtrain)
+)
+
+sum(
+  is.na(final_xtest)
+)
+
+
+#--------------------------------------------------
+# 15. SCALE DATA FOR SVM
+#--------------------------------------------------
+
+train_scaled <- scale(
+  final_xtrain
+)
+
+
+test_scaled <- scale(
+  final_xtest,
+  center = attr(
+    train_scaled,
+    "scaled:center"
+  ),
+  scale = attr(
+    train_scaled,
+    "scaled:scale"
+  )
+)
+
+
+# Replace possible NA values
+
+train_scaled[
+  is.na(train_scaled)
+] <- 0
+
+
+test_scaled[
+  is.na(test_scaled)
+] <- 0 
 
 
