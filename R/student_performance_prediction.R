@@ -439,3 +439,89 @@ test_scaled[
 ] <- 0 
 
 
+#--------------------------------------------------
+# 16. LINEAR SVM MODEL
+#--------------------------------------------------
+
+set.seed(125)
+
+svm_model <- svm(
+  x = train_scaled,
+  y = ytrain_sample,
+  kernel = "linear"
+)
+
+
+# Make predictions
+
+svm_prediction <- predict(
+  svm_model,
+  test_scaled
+)
+
+
+# Confusion Matrix
+
+svm_cm <- confusionMatrix(
+  svm_prediction,
+  ytest_sample
+)
+
+
+print(svm_cm)
+
+
+# Accuracy
+
+svm_accuracy <- svm_cm$overall[
+  "Accuracy"
+]
+
+
+print(svm_accuracy)
+
+
+#--------------------------------------------------
+# 17. RANDOM FOREST MODEL
+#--------------------------------------------------
+
+set.seed(125)
+
+rf_model <- randomForest(
+  x = final_xtrain,
+  y = ytrain_sample,
+  ntree = 50,
+  importance = TRUE
+)
+
+
+# Make predictions
+
+rf_prediction <- predict(
+  rf_model,
+  final_xtest
+)
+
+
+# Confusion Matrix
+
+rf_cm <- confusionMatrix(
+  rf_prediction,
+  ytest_sample
+)
+
+
+print(rf_cm)
+
+
+# Accuracy
+
+rf_accuracy <- rf_cm$overall[
+  "Accuracy"
+]
+
+
+print(rf_accuracy)
+
+
+
