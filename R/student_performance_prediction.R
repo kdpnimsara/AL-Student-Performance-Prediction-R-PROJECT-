@@ -8,9 +8,8 @@
 #--------------------------------------------------
 
 data <- read.csv(
-  "C://Users//USER//OneDrive//Documents//AL-Student-Performance-Prediction-R-PROJECT-//data//2020_al_data_kaggle_upload_new_old_syllabi.csv"
+  "data/2020_al_data_kaggle_upload_new_old_syllabi.csv"
 )
-
 
 #--------------------------------------------------
 # 2. LOAD LIBRARIES
@@ -835,6 +834,7 @@ if (
   )
   
 }
+
 #==================================================
 # 29. MODEL ACCURACY GRAPH
 #==================================================
@@ -1021,7 +1021,6 @@ cat(
 cat(
   "========================================\n"
 )
-```
 
 
 
