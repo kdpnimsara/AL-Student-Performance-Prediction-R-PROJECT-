@@ -835,5 +835,193 @@ if (
   )
   
 }
+#==================================================
+# 29. MODEL ACCURACY GRAPH
+#==================================================
+
+ggplot(
+  model_comparison,
+  aes(
+    x = Model,
+    y = Accuracy,
+    fill = Model
+  )
+) +
+  geom_bar(
+    stat = "identity",
+    width = 0.6
+  ) +
+  geom_text(
+    aes(
+      label = paste0(
+        round(
+          Accuracy * 100,
+          2
+        ),
+        "%"
+      )
+    ),
+    vjust = -0.5
+  ) +
+  scale_y_continuous(
+    limits = c(
+      0,
+      1
+    ),
+    labels = scales::percent
+  ) +
+  labs(
+    title = "Model Accuracy Comparison",
+    x = "Machine Learning Model",
+    y = "Accuracy"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none"
+  )
+
+
+#==================================================
+# 30. LINEAR REGRESSION GRAPH
+#==================================================
+
+regression_data <- data.frame(
+  Actual = actual_zscore,
+  Predicted = predicted_zscore
+)
+
+
+ggplot(
+  regression_data,
+  aes(
+    x = Actual,
+    y = Predicted
+  )
+) +
+  geom_point(
+    color = "blue",
+    alpha = 0.5
+  ) +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    color = "red",
+    linetype = "dashed"
+  ) +
+  labs(
+    title = "Linear Regression - Actual vs Predicted Zscore",
+    x = "Actual Zscore",
+    y = "Predicted Zscore"
+  ) +
+  theme_minimal()
+
+
+#==================================================
+# 31. FINAL RESULTS
+#==================================================
+
+cat(
+  "\n========================================\n"
+)
+
+cat(
+  "FINAL MODEL RESULTS\n"
+)
+
+cat(
+  "========================================\n"
+)
+
+
+cat(
+  "\nLinear SVM Accuracy:",
+  round(
+    svm_accuracy * 100,
+    2
+  ),
+  "%\n"
+)
+
+
+cat(
+  "Random Forest Accuracy:",
+  round(
+    rf_accuracy * 100,
+    2
+  ),
+  "%\n"
+)
+
+
+cat(
+  "\nBest Classification Model:",
+  best_model,
+  "\n"
+)
+
+
+cat(
+  "Best Classification Accuracy:",
+  round(
+    best_accuracy * 100,
+    2
+  ),
+  "%\n"
+)
+
+
+cat(
+  "\nLinear Regression MSE:",
+  round(
+    linear_mse,
+    4
+  ),
+  "\n"
+)
+
+
+cat(
+  "Linear Regression RMSE:",
+  round(
+    linear_rmse,
+    4
+  ),
+  "\n"
+)
+
+
+cat(
+  "Linear Regression MAE:",
+  round(
+    linear_mae,
+    4
+  ),
+  "\n"
+)
+
+
+cat(
+  "Linear Regression R-Squared:",
+  round(
+    linear_r2,
+    4
+  ),
+  "\n"
+)
+
+
+cat(
+  "\n========================================\n"
+)
+
+cat(
+  "PROGRAM COMPLETED SUCCESSFULLY\n"
+)
+
+cat(
+  "========================================\n"
+)
+```
+
 
 
