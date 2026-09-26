@@ -711,3 +711,129 @@ print(
   )
 )
 
+#==================================================
+# 25. MODEL COMPARISON
+#==================================================
+
+model_comparison <- data.frame(
+  Model = c(
+    "Linear SVM",
+    "Random Forest"
+  ),
+  
+  Accuracy = c(
+    as.numeric(
+      svm_accuracy
+    ),
+    
+    as.numeric(
+      rf_accuracy
+    )
+  )
+)
+
+
+# Print comparison
+
+cat(
+  "\n========================================\n"
+)
+
+cat(
+  "MODEL ACCURACY COMPARISON\n"
+)
+
+cat(
+  "========================================\n"
+)
+
+print(
+  model_comparison
+)
+
+
+#--------------------------------------------------
+# 26. FIND BEST CLASSIFICATION MODEL
+#--------------------------------------------------
+
+best_model_index <- which.max(
+  model_comparison$Accuracy
+)
+
+
+best_model <- model_comparison$Model[
+  best_model_index
+]
+
+
+best_accuracy <- model_comparison$Accuracy[
+  best_model_index
+]
+
+
+#--------------------------------------------------
+# 27. PRINT BEST MODEL
+#--------------------------------------------------
+
+cat(
+  "\n========================================\n"
+)
+
+cat(
+  "BEST CLASSIFICATION MODEL\n"
+)
+
+cat(
+  "========================================\n"
+)
+
+cat(
+  "Model:",
+  best_model,
+  "\n"
+)
+
+cat(
+  "Accuracy:",
+  round(
+    best_accuracy * 100,
+    2
+  ),
+  "%\n"
+)
+
+
+#--------------------------------------------------
+# 28. BEST MODEL CONFUSION MATRIX
+#--------------------------------------------------
+
+cat(
+  "\n========================================\n"
+)
+
+cat(
+  "BEST MODEL CONFUSION MATRIX\n"
+)
+
+cat(
+  "========================================\n"
+)
+
+
+if (
+  best_model == "Linear SVM"
+) {
+  
+  print(
+    svm_cm
+  )
+  
+} else {
+  
+  print(
+    rf_cm
+  )
+  
+}
+
+
