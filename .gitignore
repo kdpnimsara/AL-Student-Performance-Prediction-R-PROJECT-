@@ -1,4 +1,16 @@
-.Rproj.user
+# RStudio files
+.Rproj.user/
 .Rhistory
 .RData
 .Ruserdata
+
+# R package files
+.Rcheck/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
