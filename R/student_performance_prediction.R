@@ -523,5 +523,191 @@ rf_accuracy <- rf_cm$overall[
 
 print(rf_accuracy)
 
+#==================================================
+# 18. LINEAR REGRESSION
+#==================================================
 
+# Linear Regression predicts the original
+# numeric Zscore value
+
+
+# Get original Zscore values
+
+zscore_train <- data$Zscore[
+  train_index
+]
+
+
+zscore_test <- data$Zscore[
+  -train_index
+]
+
+
+# Apply same sampling
+
+zscore_train_sample <- zscore_train[
+  train_sample_index
+]
+
+
+zscore_test_sample <- zscore_test[
+  test_sample_index
+]
+
+
+#--------------------------------------------------
+# 19. TRAIN LINEAR REGRESSION MODEL
+#--------------------------------------------------
+
+linear_model <- lm(
+  zscore_train_sample ~ .,
+  data = final_xtrain
+)
+
+
+#--------------------------------------------------
+# 20. LINEAR REGRESSION PREDICTION
+#--------------------------------------------------
+
+linear_prediction <- predict(
+  linear_model,
+  newdata = final_xtest
+)
+
+
+#--------------------------------------------------
+# 21. REMOVE INVALID VALUES
+#--------------------------------------------------
+
+valid_values <- is.finite(
+  linear_prediction
+) &
+  is.finite(
+    zscore_test_sample
+  )
+
+
+actual_zscore <- zscore_test_sample[
+  valid_values
+]
+
+
+predicted_zscore <- linear_prediction[
+  valid_values
+]
+
+
+#--------------------------------------------------
+# 22. LINEAR REGRESSION METRICS
+#--------------------------------------------------
+
+# Mean Squared Error
+
+linear_mse <- mean(
+  (
+    predicted_zscore -
+      actual_zscore
+  ) ^ 2
+)
+
+
+# Root Mean Squared Error
+
+linear_rmse <- sqrt(
+  linear_mse
+)
+
+
+# Mean Absolute Error
+
+linear_mae <- mean(
+  abs(
+    predicted_zscore -
+      actual_zscore
+  )
+)
+
+
+# R-Squared
+
+linear_r2 <- 1 -
+  (
+    sum(
+      (
+        actual_zscore -
+          predicted_zscore
+      ) ^ 2
+    )
+    /
+      sum(
+        (
+          actual_zscore -
+            mean(actual_zscore)
+        ) ^ 2
+      )
+  )
+
+
+#--------------------------------------------------
+# 23. PRINT LINEAR REGRESSION RESULTS
+#--------------------------------------------------
+
+cat(
+  "\n========================================\n"
+)
+
+cat(
+  "LINEAR REGRESSION RESULTS\n"
+)
+
+cat(
+  "========================================\n"
+)
+
+cat(
+  "MSE:",
+  round(
+    linear_mse,
+    4
+  ),
+  "\n"
+)
+
+cat(
+  "RMSE:",
+  round(
+    linear_rmse,
+    4
+  ),
+  "\n"
+)
+
+cat(
+  "MAE:",
+  round(
+    linear_mae,
+    4
+  ),
+  "\n"
+)
+
+cat(
+  "R-Squared:",
+  round(
+    linear_r2,
+    4
+  ),
+  "\n"
+)
+
+
+#--------------------------------------------------
+# 24. LINEAR REGRESSION SUMMARY
+#--------------------------------------------------
+
+print(
+  summary(
+    linear_model
+  )
+)
 
